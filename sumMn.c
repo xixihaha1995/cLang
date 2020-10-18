@@ -11,5 +11,5 @@ int main() {
     int m, n;
     scanf("%d %d", &m, &n);
     printf("sum = %d\n", sumMN(m, n));
-    return 0
+    return 0;
 }
