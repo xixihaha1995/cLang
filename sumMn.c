@@ -29,6 +29,7 @@ void pyramid(int n)  {
         }
         for (; b< a; ++b){
             printf("%d", a);
+            printf(" ");
         }
         printf("\n");
     }
