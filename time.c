@@ -10,6 +10,7 @@ void func_name()
         if(getchar())
             break;
     }
+    
     printf("Function ends\n");
 }
 
