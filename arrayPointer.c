@@ -23,7 +23,7 @@ int main() {
         printf("\n\nI'll resize the array of arrPointer\n");
         oldSize = 6;
         printf("Re-allocated via realloc, and the new size is %d\n", oldSize);
-        arrPointer = realloc(arrPointer, oldSize*sizeof(int));
+        arrPointer = (int *) realloc(arrPointer, oldSize*sizeof(int));
         for(i = 0; i< oldSize; i++) {
             arrPointer[i] = i+6;
         }
