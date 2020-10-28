@@ -17,13 +17,13 @@ int main() {
         for (int i = 0; i < oldSize; ++i) {
             arrPointer[i] = i + 1;
         printf("The elements for the arrPointer is: \n");
-        for(i =0; i < n; i++) {
+        for(i =0; i < oldSize; i++) {
             printf(" %d", arrPointer[i]);
         }
         printf("\n\nI'll resize the array of arrPointer\n");
         oldSize = 6;
         printf("Re-allocated via realloc, and the new size is %d\n", oldSize);
-        arrPointer = realloc(arrPointer, oldSize*sizeof(int) );
+        arrPointer = realloc(arrPointer, oldSize*sizeof(int));
         for(i = 0; i< oldSize; i++) {
             arrPointer[i] = i+6;
         }
