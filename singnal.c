@@ -16,5 +16,6 @@ int main()
 
 void sighandler(int signum)
 {
-    printf("caught singal %d, and now I am exiting...\n");
+    printf("caught singal %d, and now I am exiting...\n", signum);
+    exit(1);
 }
