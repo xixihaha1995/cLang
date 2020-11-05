@@ -3,6 +3,13 @@
 #include <unistd.h>
 #include <sys/types.h>
 
+struct aBa
+{
+    int i;
+    char ch;
+    float f;
+}
+
 int main()
 {
     fork();
