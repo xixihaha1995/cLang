@@ -6,6 +6,7 @@ int main()
 {
     FILE *fp;
     fp = fopen("tmp", "r");
+    int * p = malloc(sizeof(int));
     if(fp == NULL)
     {
         // fprintf(stderr, "fopen() failed errno = %d\n", errno);
