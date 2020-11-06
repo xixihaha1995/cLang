@@ -8,7 +8,7 @@ struct aBa
     int i;
     char ch;
     float f;
-}
+};
 
 int main()
 {
