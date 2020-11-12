@@ -5,7 +5,11 @@ int main(int argc, char **argv)
 {
     FILE *fps, *fpd;
     int ch;
-
+    
+    if(argc < 3)
+    {
+        
+    }
     fps = fopen(argv[1], "r");
     if (fps == NULL){
         perror();
