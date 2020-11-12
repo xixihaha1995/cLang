@@ -8,12 +8,12 @@ int main(int argc, char **argv)
     
     if(argc < 3)
     {
-        fprintf(stderr, "%s <src_file> <dst_file>\n", argv[0]);
+        fprintf(stderr, "Usage: %s <src_file> <dst_file>\n", argv[0]);
         exit(1);
     }
     fps = fopen(argv[1], "r");
     if (fps == NULL){
-        perror();
+        perror("fopen");
         exit(1);
     }
     fpd = fopen(argv[2], "w");
