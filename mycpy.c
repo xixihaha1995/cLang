@@ -18,6 +18,7 @@ int main(int argc, char **argv)
     }
     fpd = fopen(argv[2], "w");
     if (fpd == NULL){
+        fclose(fps);
         perror("fopen");
         exit(1);
     }
