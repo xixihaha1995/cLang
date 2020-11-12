@@ -21,5 +21,5 @@ int main(int argc, char **argv)
     fclose(fps);
     fclose(fpd);
 
-    exit(0)
+    exit(0);
 }
