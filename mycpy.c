@@ -8,7 +8,8 @@ int main(int argc, char **argv)
     
     if(argc < 3)
     {
-        
+        fprintf(stderr, "%s <src_file> <dst_file>\n", argv[0]);
+        exit(1);
     }
     fps = fopen(argv[1], "r");
     if (fps == NULL){
