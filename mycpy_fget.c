@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     }
     while(fgets(buf, BUFFSIZE, fps) != NULL)
     {
-        fprintf(stdout, "fps address %d\n", fps);
+        fprintf(stdout, "fps address %d\n", fpd);
         fputs(buf, fpd);
     }
         
