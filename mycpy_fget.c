@@ -4,7 +4,8 @@
 int main(int argc, char **argv)
 {
     FILE *fps, *fpd;
-    char buf[BUFFSIZE];    
+    char buf[BUFFSIZE];  
+    long pos;  
     if(argc < 3)
     {
         fprintf(stderr, "Usage: %s <src_file> <dst_file>\n", argv[0]);
@@ -22,8 +23,9 @@ int main(int argc, char **argv)
         exit(1);
     }
     while(fgets(buf, BUFFSIZE, fps) != NULL)
-    {
-        fprintf(stdout, "fps address %d\n", fpd);
+    {   
+        pos = ftell(fps);
+        fprintf(stdout, "fps address %ld\n", pos);
         fputs(buf, fpd);
     }
         
