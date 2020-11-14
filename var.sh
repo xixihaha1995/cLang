@@ -1,3 +1,3 @@
-riabl#!/bin/sh
-MY_MESS = "hahah"
+#!/bin/sh
+MY_MESS="hahah"
 echo $MY_MESS
