@@ -1,4 +1,4 @@
 #!/bin/sh
-echo "What's your name?"
-read YourName
-echo "Hello $YourName Welcome"
+echo "MYVAR IS $MYVAR"
+MYVAR="hi there"
+echo "MYVAR IS $MYVAR"
