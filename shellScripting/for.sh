@@ -1,5 +1,5 @@
 #! /usr/bin/bash
-for i in 1 2 3
+for i in hey man bro wasup 1 * 2 
 do 
     echo "Looping  number $i"
 done
