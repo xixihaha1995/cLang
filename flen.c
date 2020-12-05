@@ -11,6 +11,6 @@ int main(int argc, char ** argv)
     }
     fseek(fp, 0, SEEK_END);
     printf("%ld\n", ftell(fp));
-    return 0;
+    exit(0);
 
 }
