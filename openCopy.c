@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
+// open head files
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+// close head filesq
+#include <unistd.h>
 
 #define BUFFSIZE 1024
 
-int main(int argc, char * argv)
+int main(int argc, char ** argv)
 {
     if (argc < 3)
     {
