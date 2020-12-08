@@ -17,7 +17,7 @@ int main(int argc, char ** argv)
         exit(1);
     }
     int sfd, dfd;
-    int rc, wc;
+    int rc, wc, pos;
     char buf[BUFFSIZE];
 
 
@@ -42,12 +42,20 @@ int main(int argc, char ** argv)
         {
             break;
         }
-        wc = write(dfd, buf, rc);
-        if (wc < 0)
+        pos = 0;
+        while(rc > 0)
         {
-            break;
-            exit(1);
+            wc = write(dfd, buf+pos, rc);
+            if (wc < 0)
+            {
+                // break;
+                // break is not enough for nested for loop
+                exit(1);
+            }
+            pos += wc;
+            rc -= wc;
         }
+        
     }
 
     close(dfd);
