@@ -4,7 +4,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-static int flen(const char * fname)
+static off_t flen(const char * fname)
 {
     struct stat statres;
     if (stat(fname,&statres)<0)
@@ -22,6 +22,6 @@ int main(int argc, char ** argv)
         perror("Usage [FILENAME]");
         exit(1);
     }
-    printf("%d\n", flen(argv[1]));
+    printf("%lld\n", flen(argv[1]));
     exit(1);
 }
