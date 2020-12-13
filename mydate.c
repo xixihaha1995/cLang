@@ -22,13 +22,21 @@ int main(int argc, char **argv)
 
     while(1)
     {
-        c = getopt(argc, argv, "HMSYmd");
+        c = getopt(argc, argv, "H:MSYmd");
         if (c < 0)
             break;
         switch (c)
         {
             case 'H':
-                strncat(timefmt,"%H时", TIMEFMTSIZE);
+                if (strcmp(optarg,"12")==0)
+                    strncat(timefmt,"%I(%P)", TIMEFMTSIZE);
+                else if(strcmp(optarg, "24")==0)
+                    strncat(timefmt,"%H时", TIMEFMTSIZE);
+                    else
+                    {
+                        fprintf(stderr,"invalid hour argument\n");
+                    }
+                    
                 break;
             case 'M':
                 /* code */
