@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 
     while(1)
     {
-        c = getopt(argc, argv, "HMSymd");
+        c = getopt(argc, argv, "HMSYmd");
         if (c < 0)
             break;
         switch (c)
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
             case 'S':
                 strncat(timefmt,"%S秒", TIMEFMTSIZE);
                 break;
-            case 'y':
+            case 'Y':
                 strncat(timefmt,"%Y年", TIMEFMTSIZE);
                 break;
             case 'm':
