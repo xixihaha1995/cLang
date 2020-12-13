@@ -28,22 +28,23 @@ int main(int argc, char **argv)
         switch (c)
         {
             case 'H':
+                strncat(timefmt,"%H时", TIMEFMTSIZE);
                 break;
             case 'M':
                 /* code */
-                strncat(timefmt,"%M", TIMEFMTSIZE);
+                strncat(timefmt,"%M分", TIMEFMTSIZE);
                 break;
             case 'S':
-                strncat(timefmt,"%S", TIMEFMTSIZE);
+                strncat(timefmt,"%S秒", TIMEFMTSIZE);
                 break;
             case 'y':
-                strncat(timefmt,"%y", TIMEFMTSIZE);
+                strncat(timefmt,"%Y年", TIMEFMTSIZE);
                 break;
             case 'm':
-                strncat(timefmt,"%m", TIMEFMTSIZE);
+                strncat(timefmt,"%m月", TIMEFMTSIZE);
                 break;
             case 'd':
-                strncat(timefmt,"%d", TIMEFMTSIZE);
+                strncat(timefmt,"%d日", TIMEFMTSIZE);
                 break;
             default:
                 break;
