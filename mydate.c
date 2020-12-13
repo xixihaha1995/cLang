@@ -12,10 +12,13 @@ int main(int argc, char **argv)
     time_t stamp;
     struct tm *tm;
     char strtime[STRTIMESIZE];
-    stamp = time(NULL);
-    tm = localtime(stamp);
     char timefmt[TIMEFMTSIZE];
-    timefmt[0] = "\0";
+    timefmt[0] = '\0';
+    int c;
+
+    stamp = time(NULL);
+    tm = localtime(&stamp);
+
 
     while(1)
     {
@@ -24,18 +27,31 @@ int main(int argc, char **argv)
             break;
         switch (c)
         {
-        case "M":
-            /* code */
-            strncat(timefmt,"%M", TIMEFMTSIZE);
-            break;
-        
-        default:
-            break;
+            case 'H':
+                break;
+            case 'M':
+                /* code */
+                strncat(timefmt,"%M", TIMEFMTSIZE);
+                break;
+            case 'S':
+                strncat(timefmt,"%S", TIMEFMTSIZE);
+                break;
+            case 'y':
+                strncat(timefmt,"%y", TIMEFMTSIZE);
+                break;
+            case 'm':
+                strncat(timefmt,"%m", TIMEFMTSIZE);
+                break;
+            case 'd':
+                strncat(timefmt,"%d", TIMEFMTSIZE);
+                break;
+            default:
+                break;
         }
     }
 
 
-    strftime(strtime, STRTIMESIZE,"", tm);
+    strftime(strtime, STRTIMESIZE,timefmt, tm);
     puts(strtime);
     exit(0);
     
