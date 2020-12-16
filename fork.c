@@ -3,18 +3,27 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-struct aBa
-{
-    int i;
-    char ch;
-    float f;
-};
 
 int main()
-{
-    fork();
-    fork();
-    fork();
-    printf("hello!\n");
+{   
+    pid_t res;
+    printf("[%d]:Begin\n", getpid());
+
+    res = fork();
+    if (res < 0)
+    {
+        perror("Fork() failure");
+        exit(0);
+    }
+    if (res == 0)
+    {
+        printf("[%d]:Child is working\n", getpid());
+    }
+    else
+    {
+        printf("[%d]:Parent is working\n", getpid());
+    }
+    printf("[%d]:End!\n", getpid());
+    exit(0);
     
 }
