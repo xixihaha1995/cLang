@@ -9,6 +9,7 @@ int main()
     pid_t res;
     printf("[%d]:Begin\n", getpid());
 
+    fflush(NULL);
     res = fork();
     if (res < 0)
     {
