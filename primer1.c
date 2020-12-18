@@ -36,11 +36,12 @@ int main()
             }
             exit(0);
         }
-        for(i = LEFT; i <= RIGHT; ++i)
+
+        
+    }
+    for(i = LEFT; i <= RIGHT; ++i)
         {
             wait(NULL);
         }
-        
-    }
     exit(0);
 }
