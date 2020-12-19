@@ -22,7 +22,7 @@ int main()
         }
         if (pid == 0)
         {
-            for(i=n; i<=RIGHT;n+=N)
+            for(i=LEFT+n; i<=RIGHT;i+=N)
             {   
                 mark =1;
                 for(j=2; j < i/2; ++j)
@@ -35,13 +35,13 @@ int main()
                 }
                 if (mark == 1)
                 {
-                    printf("%d is a primer\n", i);
+                    printf("[%d]:%d is a primer\n",n, i);
                 }
-                exit(0);
             }
+            exit(0);
         }
     }
-    for(i = LEFT; i <= RIGHT; ++i)
+    for(i = 0; i <N; ++i)
         {
             wait(NULL);
         }
