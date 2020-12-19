@@ -18,11 +18,11 @@ int main()
         if (pid < 0)
         {
             perror("fork()");
-            exit(0);
+            exit(1);
         }
         if (pid == 0)
         {
-            for(i=LEFT; i<=RIGHT;++i)
+            for(i=n; i<=RIGHT;n+=N)
             {   
                 mark =1;
                 for(j=2; j < i/2; ++j)
