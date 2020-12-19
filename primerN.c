@@ -14,18 +14,16 @@ int main()
     pid_t pid;
     for (n = 0; n <N; ++n)
     {
-
-    
-        pid = fork()
-        for(i=LEFT; i<=RIGHT;++i)
-        {   
-            if (pid < 0)
-            {
-                perror("fork()");
-                exit(1);
-            }
-            if (pid  == 0)
-            {
+        pid = fork();
+        if (pid < 0)
+        {
+            perror("fork()");
+            exit(0);
+        }
+        if (pid == 0)
+        {
+            for(i=LEFT; i<=RIGHT;++i)
+            {   
                 mark =1;
                 for(j=2; j < i/2; ++j)
                 {
@@ -41,8 +39,6 @@ int main()
                 }
                 exit(0);
             }
-
-            
         }
     }
     for(i = LEFT; i <= RIGHT; ++i)
