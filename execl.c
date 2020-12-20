@@ -5,6 +5,7 @@
 int main()
 {
     puts("Begin");
+    fflush(NULL);
 
     execl("/bin/date","date","+%s",NULL);
     perror("execl()");
