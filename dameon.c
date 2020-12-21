@@ -15,11 +15,11 @@ static int damenoize(void)
     if(pid < 0)
     {
         perror("fork()");
-        return -1
+        return -1;
     }
     if (pid > 0)
         exit(0);
-    fd = open("dev/null", O_RDWR);
+    fd = open("/dev/null", O_RDWR);
     if (fd < 0)
     {
         perror("open for NULL device");
@@ -29,7 +29,7 @@ static int damenoize(void)
     dup2(fd, 1);
     dup2(fd,2);
     if (fd >2)
-        clost(fd);
+        close(fd);
     setsid();
     chdir("/");
     // umask(0);
@@ -42,7 +42,7 @@ int main()
     FILE *fp;
     int i;
 
-    if (dameonize())
+    if (damenoize())
     {
         exit(1);
     }
