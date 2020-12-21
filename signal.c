@@ -6,7 +6,7 @@
 static void interRupt(int sig)
 {
     printf("caught singal %d, I'm exiting\n", sig);
-    exit(1);
+    // exit(1);
 }
 
 
