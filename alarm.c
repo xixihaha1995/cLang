@@ -13,10 +13,12 @@ static void alarm_handler(int s)
 int main()
 {
     int64_t count = 0;
-    alarm(5);
-    // after 5 seconds, this program will end.
+
     signal(SIGALRM, alarm_handler);
     // replace alarm signal behavior from end to user-defined
+    alarm(5);
+    // after 5 seconds, this program will end.
+    // alarm signal behavior should be defined first
     while(loop)
         count ++;
     printf("%lld", count);

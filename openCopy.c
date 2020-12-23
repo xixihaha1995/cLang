@@ -6,23 +6,37 @@
 #include <fcntl.h>
 // close head filesq
 #include <unistd.h>
+#include <signal.h>
 
-#define BUFFSIZE 1024
+#define CPS 10
+#define BUFFSIZE CPS
+
+static volatile int loop = 0;
+static void alrm_handler(int s)
+{
+    loop = 1;
+    alarm(1);
+}
 
 int main(int argc, char ** argv)
 {
-    if (argc < 3)
+    int sfd, dfd = 1;
+    int rc, wc, pos;
+    char buf[BUFFSIZE];
+
+    if (argc < 2)
     {
         perror("Usage <SFD> <DFD>");
         exit(1);
     }
-    int sfd, dfd;
-    int rc, wc, pos;
-    char buf[BUFFSIZE];
+
+    alarm(1);
+    signal(SIGALRM, alrm_handler);
+
 
 
     sfd = open(argv[1], O_RDONLY);
-    dfd = open(argv[2], O_WRONLY|O_CREAT|O_TRUNC, 0600);
+    // dfd = open(argv[2], O_WRONLY|O_CREAT|O_TRUNC, 0600);
     if(dfd < 0)
     {
         close(sfd);
@@ -32,6 +46,9 @@ int main(int argc, char ** argv)
 
     while(1)
     {
+        while (!loop)
+            ;
+        loop = 0;
         rc = read(sfd, buf, BUFFSIZE);
         if (rc < 0)
         {
@@ -58,7 +75,7 @@ int main(int argc, char ** argv)
         
     }
 
-    close(dfd);
+    // close(dfd);
     close(sfd);
 
     exit(0);
