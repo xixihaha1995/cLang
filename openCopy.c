@@ -50,12 +50,14 @@ int main(int argc, char ** argv)
         while (!loop)
             pause();
         loop = 0;
-        rc = read(sfd, buf, BUFFSIZE);
-        if (rc < 0)
+        while((rc = read(sfd, buf, BUFFSIZE)) < 0)
         {
-            if()
+            if(errno = EINTR)
+                continue;
+            // false failure
             perror("read()..");
-            exit(1);
+            break;
+            // ture failure
         }
         if (rc == 0)
         {
