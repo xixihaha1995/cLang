@@ -7,6 +7,7 @@
 // close head filesq
 #include <unistd.h>
 #include <signal.h>
+#include <errno.h>
 
 #define CPS 10
 #define BUFFSIZE CPS
@@ -47,11 +48,12 @@ int main(int argc, char ** argv)
     while(1)
     {
         while (!loop)
-            ;
+            pause();
         loop = 0;
         rc = read(sfd, buf, BUFFSIZE);
         if (rc < 0)
         {
+            if()
             perror("read()..");
             exit(1);
         }
