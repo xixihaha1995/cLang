@@ -15,10 +15,15 @@ int main()
 {
     int i;
     signal(SIGINT, interRupt);
-    for (i=0; i < 10; i++)
+    while(1)
     {
-        write(1,"*",1);
-        sleep(1);
+        for (i=0; i < 5; i++)
+        {
+            write(1,"*",1);
+            sleep(1);
+        }
+        write(1,"\n",1);
     }
+
     exit(0);
 }
