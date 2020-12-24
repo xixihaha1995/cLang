@@ -40,7 +40,11 @@ int main(int argc, char ** argv)
     itv.it_value.tv_sec = 1;
     itv.it_value.tv_usec = 0;
 
-    setitimer(ITIMER_REAL, &itv, NULL);
+    if(setitimer(ITIMER_REAL, &itv, NULL) < 0)
+    {
+        perror("setitiemr()");
+        exit(1);
+    }
 
 
     sfd = open(argv[1], O_RDONLY);
