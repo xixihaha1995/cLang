@@ -4,6 +4,7 @@
 #include <string.h>
 // the name of thread function parameters is meaningless
 // it's just a name 
+//这个名字p不是必需的，void *, void **只是说明数据类型
 static void *func(void *p)
 {
     puts("Thread is working!");
@@ -21,6 +22,6 @@ int main()
         fprintf(stderr, "pthread_create():%s\n",strerror(err));
         exit(1);
     }
-    puts("End!\n");
+    puts("End!");
     exit(0);
 }
