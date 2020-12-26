@@ -22,19 +22,19 @@ int main()
             exit(1);
         }
     }
+    
+    for(i = LEFT; i<= RIGHT; i++)
     {
-        for(i = LEFT; i<= RIGHT; i++)
-        {
-            pthread_join(tid[i-LEFT], NULL);
-        }
-        
+        pthread_join(tid[i-LEFT], NULL);
     }
+        
+    
     exit(0);
 }
 // void *p is exactly &i from which it has been called in main function
 static void *thr_prime(void *p)
 {
-    int mark,i;
+    int mark,i,j;
     i = *(int *)p;
     mark = 1;
     for(j = 2; j<i/2; j++)
@@ -47,7 +47,7 @@ static void *thr_prime(void *p)
     }
     if(mark)
     {
-        printf("%d is a primer\n", p);
+        printf("%d is a primer\n", i);
     }
     pthread_exit(NULL);
     
