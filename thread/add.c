@@ -6,7 +6,7 @@
 
 #define THRNUM  20
 #define FNAME   "/tmp/out"
-#define LINESIZE    1024
+#define LINESIZE    1025
 
 static void *thr_add(void *p)
 {
