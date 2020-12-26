@@ -53,6 +53,7 @@ static void *thr_prime(void *p)
     int mark,i,j;
     // force void * to struct * pointer, then get its member n
     i = ((struct thr_arg_st *)p)->n;
+    free(p);
     mark = 1;
     for(j = 2; j<i/2; j++)
     {
