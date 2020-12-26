@@ -14,8 +14,8 @@ static void *func(void *p)
     puts("Thread is working!");
 
     pthread_cleanup_push(clean_func,"reverse call: 1");
-    pthread_cleanup_push(clean_func,"reverse call: 1");
-    pthread_cleanup_push(clean_func,"reverse call: 1");
+    pthread_cleanup_push(clean_func,"reverse call: 2");
+    pthread_cleanup_push(clean_func,"reverse call: 3");
 
     puts("push over!");
 
@@ -39,5 +39,8 @@ int main()
         fprintf(stderr, "pthread_create():%s\n", strerror(err)); 
         exit(1);
     }
+    pthread_join(tid, NULL);
+    puts("why pthread_join is required");
+
     exit(0);
 }
