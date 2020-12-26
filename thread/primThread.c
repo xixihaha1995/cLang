@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <pthread.h>
+#include <string.h>
 
 #define LEFT 30000000
 #define RIGHT 30000200
@@ -8,34 +10,21 @@
 
 int main()
 {
-    int i, j, mark;
+    int i, j, mark,err;
     pthread_t tid[THRNUM];
     for(i=LEFT; i<=RIGHT;i++)
     {   
-        pid = fork();
-        if (pid < 0)
+        err = pthread_create(tid+(i-LEFT), NULL,&i);
+        if (err)
         {
-            perror("fork()");
+            fprintf(stderr, "pthread_create():%s\n", strerror(err));
             exit(1);
         }
     }
     {
-        if (pid  == 0)
+        for(i = LEFT; i<= RIGHT; i++)
         {
-            mark =1;
-            for(j=2; j < i/2; ++j)
-            {
-                if (i%j == 0)
-                {
-                    mark = 0;
-                    break;
-                }
-            }
-            if (mark == 1)
-            {
-                printf("%d is a primer\n", i);
-            }
-            exit(0);
+            pthread_join(tid[i-LEFT], NULL);
         }
         
     }
