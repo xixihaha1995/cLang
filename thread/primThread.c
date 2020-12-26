@@ -9,8 +9,8 @@
 int main()
 {
     int i, j, mark;
-    pid_t pid;
-    for(i=LEFT; i<=RIGHT;++i)
+    pthread_t tid[THRNUM];
+    for(i=LEFT; i<=RIGHT;i++)
     {   
         pid = fork();
         if (pid < 0)
@@ -18,6 +18,8 @@ int main()
             perror("fork()");
             exit(1);
         }
+    }
+    {
         if (pid  == 0)
         {
             mark =1;
