@@ -8,7 +8,8 @@
 static void *func(void *p)
 {
     puts("Thread is working!");
-    return NULL;
+    pthread_exit(NULL);
+    // return NULL;
 }
 
 int main()
@@ -22,6 +23,7 @@ int main()
         fprintf(stderr, "pthread_create():%s\n",strerror(err));
         exit(1);
     }
+    pthread_join(tid, NULL);
     puts("End!");
     exit(0);
 }
