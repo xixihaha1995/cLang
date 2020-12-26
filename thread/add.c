@@ -20,7 +20,7 @@ static void *thr_add(void *p)
     }
     fgets(linebuf,LINESIZE,fp);
     fseek(fp,0,SEEK_SET);
-    sleep(1);
+    // sleep(1);
     fprintf(fp,"%d\n",atoi(linebuf)+1);
     fclose(fp);
     pthread_exit(NULL);
