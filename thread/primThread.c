@@ -11,7 +11,7 @@ static void *thr_prime(void *p);
 
 int main()
 {
-    int i, j,err;
+    int i,err;
     pthread_t tid[THRNUM];
     for(i=LEFT; i<=RIGHT;i++)
     {   
