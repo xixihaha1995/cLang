@@ -10,7 +10,7 @@
 
 int main()
 {
-    int i, j, mark,err;
+    int i, j,err;
     pthread_t tid[THRNUM];
     for(i=LEFT; i<=RIGHT;i++)
     {   
@@ -33,6 +33,7 @@ int main()
 
 static void *thr_prime(void *p)
 {
+    int mark,i;
     for(i = LEFT; i <= RIGHT; i++)
     {
         mark = 1;
@@ -46,7 +47,7 @@ static void *thr_prime(void *p)
         }
         if(mark)
         {
-            printf("%d is a primer\n", i);
+            printf("%d is a primer\n", p);
         }
     }
 }
