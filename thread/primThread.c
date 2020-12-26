@@ -14,7 +14,7 @@ int main()
     pthread_t tid[THRNUM];
     for(i=LEFT; i<=RIGHT;i++)
     {   
-        err = pthread_create(tid+(i-LEFT), NULL,&i);
+        err = pthread_create(tid+(i-LEFT), NULL,thr_prime,&i);
         if (err)
         {
             fprintf(stderr, "pthread_create():%s\n", strerror(err));
@@ -29,4 +29,24 @@ int main()
         
     }
     exit(0);
+}
+
+static void *thr_prime(void *p)
+{
+    for(i = LEFT; i <= RIGHT; i++)
+    {
+        mark = 1;
+        for(j = 2; j<i/2; j++)
+        {
+            if(i%j == 0)
+            {
+                mark = 0;
+                break;
+            }
+        }
+        if(mark)
+        {
+            printf("%d is a primer\n", i);
+        }
+    }
 }
