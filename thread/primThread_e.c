@@ -18,7 +18,7 @@ int main()
     int i,err;
     pthread_t tid[THRNUM];
     struct thr_arg_st *p;
-    
+    void *returnedStP;
     
     
 
@@ -41,7 +41,10 @@ int main()
     
     for(i = LEFT; i<= RIGHT; i++)
     {
-        pthread_join(tid[i-LEFT], NULL);
+        // join needs a secondary pointer
+        // or the address of void *pointer
+        pthread_join(tid[i-LEFT], &returnedStP);
+        free(returnedStP);
     }
         
     
@@ -53,7 +56,7 @@ static void *thr_prime(void *p)
     int mark,i,j;
     // force void * to struct * pointer, then get its member n
     i = ((struct thr_arg_st *)p)->n;
-    free(p);
+    // free(p);
     mark = 1;
     for(j = 2; j<i/2; j++)
     {
@@ -67,6 +70,6 @@ static void *thr_prime(void *p)
     {
         printf("%d is a primer\n", i);
     }
-    pthread_exit(NULL);
+    pthread_exit(p);
     
 }
