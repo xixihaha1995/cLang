@@ -118,6 +118,7 @@ static void *thr_prime(void *p)
         }
         if (mark)
         {
+            // 这里的p->n 不是真正的线程编号，只是人为规定的
             printf("[%d]:%d is a primer\n",((struct thr_arg_st *)p)->n, i);
         }
     }
