@@ -18,9 +18,18 @@ static void *thr_func(void *p)
     int c = 'a' + n;
     while(1)
     {
-        pthread_mutex_lock(mut+n);
+        // here to lock the static num
+        pthread_mutex_lock(&mut);
+        while( num != n)
+        {
+            pthread_cond_wait(&cond, &mut);
+        }
         write(1,&c,1);
-        pthread_mutex_unlock(mut+(n+1)%4);
+        num = (num+1)%4;
+        pthread_cond_broadcast(&cond);
+        // broadcast result: all thread including main thread will receive notifications
+        // unlock(next(thread)) result: next thread will be assigned task
+        // pthread_mutex_unlock(mut+(n+1)%4);
     }
         
     pthread_exit(NULL);
@@ -33,8 +42,7 @@ int main()
     pthread_t tid[THRNUM];
     for(i = 0; i< THRNUM; i++)
     {    
-        pthread_mutex_init(mut+i, NULL);
-        pthread_mutex_lock(mut+i);
+        
         err = pthread_create(tid+i,NULL, thr_func,(void *)i);
         if(err)
         {
@@ -42,10 +50,12 @@ int main()
             exit(1);
         }
     }
-    pthread_mutex_unlock(mut+0);
+    // use static num to determine whose turn
     alarm(5);
     for (i = 0; i <THRNUM; i++)
     {
         pthread_join(tid[i], NULL);
     }    
+    pthread_cond_destroy(&cond);
+    pthread_mutex_destroy(&mut);
 }
