@@ -57,7 +57,7 @@ int main()
         pthread_mutex_unlock(&mut_num);
     }
 
-    pthread_mutex_unlock(&mut_num);
+    pthread_mutex_lock(&mut_num);
     // make sure the last task has been taken
     while(num != 0)
     {
@@ -66,7 +66,7 @@ int main()
         pthread_mutex_lock(&mut_num);
     }
     num = -1;
-    pthread_mutex_lock(&mut_num);
+    pthread_mutex_unlock(&mut_num);
     
 
     for (i = 0; i < THRNUM; i++)
@@ -99,7 +99,7 @@ static void *thr_prime(void *p)
         }
         if (num == -1)
         {
-            pthread_mutex_lock(&mut_num);
+            pthread_mutex_unlock(&mut_num);
             break;
         }
         i = num;
