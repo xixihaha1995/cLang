@@ -6,9 +6,9 @@
 
 #define THRNUM  4
 // #define FNAME   "/tmp/out"
-#define LINESIZE    1025
+#define LINESIZE    1024
 
-static pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t mut[THRNUM];
 
 static void *thr_func(void *p)
 {
@@ -24,7 +24,9 @@ int main()
     int i, err;
     pthread_t tid[THRNUM];
     for(i = 0; i< THRNUM; i++)
-    {
+    {    
+        pthread_mutex_init(mut+i, NULL);
+        pthread_mutex_lock(mut+i);
         err = pthread_create(tid+i,NULL, thr_func,(void *)i);
         if(err)
         {
@@ -32,6 +34,7 @@ int main()
             exit(1);
         }
     }
+    pthread_mutex_unlock(mut+0);
     alarm(5);
     for (i = 0; i <THRNUM; i++)
     {
