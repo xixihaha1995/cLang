@@ -18,7 +18,7 @@ static void *thr_func(void *p)
     {
         pthread_mutex_lock(mut+n);
         write(1,&c,1);
-        pthread_mutex_unlock(mut+(n+1)%3);
+        pthread_mutex_unlock(mut+(n+1)%4);
     }
         
     pthread_exit(NULL);
