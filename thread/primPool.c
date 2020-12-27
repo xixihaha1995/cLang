@@ -4,8 +4,8 @@
 #include <pthread.h>
 #include <string.h>
 
-#define LEFT 30000000
-#define RIGHT 30000200
+#define LEFT 0
+#define RIGHT 3
 #define THRNUM (RIGHT-LEFT+1)
 
 
