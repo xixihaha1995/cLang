@@ -82,10 +82,16 @@ static void *thr_prime(void *p)
     // i = ((struct thr_arg_st *)p)->n;
 
 
-    pthread_mutex_lock();
+    pthread_mutex_lock(&mut_num);
+    while(num == 0)
+    {
+        pthread_mutex_unlock(&mut_num);
+        sched_yield();
+        pthread_mutex_lock(&mut_num);
+    }
     i = num;
     num = 0;
-    pthread_mutex_unlock();
+    pthread_mutex_unlock(&mut_num);
 
     // free(p);
     mark = 1;
