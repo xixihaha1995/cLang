@@ -29,7 +29,7 @@ static void *thr_func(void *p)
         pthread_cond_broadcast(&cond);
         // broadcast result: all thread including main thread will receive notifications
         // unlock(next(thread)) result: next thread will be assigned task
-        // pthread_mutex_unlock(mut+(n+1)%4);
+        pthread_mutex_unlock(&mut);
     }
         
     pthread_exit(NULL);
