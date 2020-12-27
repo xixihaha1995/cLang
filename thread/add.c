@@ -8,6 +8,8 @@
 #define FNAME   "/tmp/out"
 #define LINESIZE    1025
 
+static pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
+
 static void *thr_add(void *p)
 {
     char linebuf[LINESIZE];
@@ -18,11 +20,13 @@ static void *thr_add(void *p)
         perror("fopen()");
         exit(1);
     }
+    pthread_mutex_lock(&mut);
     fgets(linebuf,LINESIZE,fp);
     fseek(fp,0,SEEK_SET);
     // sleep(1);
     fprintf(fp,"%d\n",atoi(linebuf)+1);
     fclose(fp);
+    pthread_mutex_unlock(&mut);
     pthread_exit(NULL);
 
 }
@@ -44,4 +48,5 @@ int main()
     {
         pthread_join(tid[i], NULL);
     }    
+    pthread_mutex_destroy(&mut);
 }
