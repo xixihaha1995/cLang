@@ -19,6 +19,8 @@ static void *thr_func(void *p)
     while(1)
     {
         // here to lock the static num
+        // each thread will become state of waiting for task
+        // they lock themselves and cond_wait
         pthread_mutex_lock(&mut);
         while( num != n)
         {
