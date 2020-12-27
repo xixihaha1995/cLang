@@ -11,7 +11,7 @@
 
 static int num = 0;
 static pthread_mutex_t mut_num = PTHREAD_MUTEX_INITIALIZER;
-static pthread_cond_t con = PTHREAD_COND_INITIALIZER;
+static pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
 static void *thr_prime(void *p);
 struct thr_arg_st
@@ -50,12 +50,14 @@ int main()
         pthread_mutex_lock(&mut_num);
         while (num != 0)
         {
+            pthread_cond_wait(&cond, &mut_num);
             // pthread_mutex_unlock(&mut_num);
             // // small sleep without interuption of process scheduling
             // sched_yield();
             // pthread_mutex_lock(&mut_num);
         }
         num = i;
+        pthread_cond_signal(&cond);
         pthread_mutex_unlock(&mut_num);
     }
 
@@ -68,6 +70,7 @@ int main()
         pthread_mutex_lock(&mut_num);
     }
     num = -1;
+    pthread_cond_broadcast(&cond);
     pthread_mutex_unlock(&mut_num);
     
 
@@ -80,6 +83,7 @@ int main()
     }
 
     pthread_mutex_destroy(&mut_num);
+    pthread_cond_destroy(&cond);
 
     exit(0);
 }
@@ -96,9 +100,10 @@ static void *thr_prime(void *p)
         // downstream thread wait for task: wait for num larger than 0
         while (num == 0)
         {
-            pthread_mutex_unlock(&mut_num);
-            sched_yield();
-            pthread_mutex_lock(&mut_num);
+            pthread_cond_wait(&cond, &mut_num);
+            // pthread_mutex_unlock(&mut_num);
+            // sched_yield();
+            // pthread_mutex_lock(&mut_num);
         }
         if (num == -1)
         {
@@ -107,6 +112,7 @@ static void *thr_prime(void *p)
         }
         i = num;
         num = 0;
+        pthread_cond_broadcast(&cond);
         pthread_mutex_unlock(&mut_num);
 
         // free(p);
