@@ -55,9 +55,20 @@ int main()
         num = i;
         pthread_mutex_unlock(&mut_num);
     }
-    num = -1;
 
-    for (i = 0; i <= THRNUM; i++)
+    pthread_mutex_unlock(&mut_num);
+    // make sure the last task has been taken
+    while(num != 0)
+    {
+        pthread_mutex_unlock(&mut_num);
+        sched_yield();
+        pthread_mutex_lock(&mut_num);
+    }
+    num = -1;
+    pthread_mutex_lock(&mut_num);
+    
+
+    for (i = 0; i < THRNUM; i++)
     {
         // join needs a secondary pointer
         // or the address of void *pointer
@@ -106,7 +117,7 @@ static void *thr_prime(void *p)
         }
         if (mark)
         {
-            printf("%d is a primer\n", i);
+            printf("[%d]:%d is a primer\n",((struct thr_arg_st *)p)->n, i);
         }
     }
 
