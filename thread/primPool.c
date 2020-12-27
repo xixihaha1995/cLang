@@ -44,6 +44,19 @@ int main()
         }
     }
     
+    for(i = LEFT; i<= RIGHT; i++)
+    {
+        pthread_mutex_lock(&mut_num);
+        while(num != 0)
+        {
+            pthread_mutex_unlock(&mut_num);
+            sched_yield();
+            pthread_mutex_lock(&mut_num);
+        }
+        num = i;
+
+    }
+
     for(i = 0; i<= THRNUM; i++)
     {
         // join needs a secondary pointer
@@ -63,7 +76,9 @@ static void *thr_prime(void *p)
 {
     int mark,i,j;
     // force void * to struct * pointer, then get its member n
-    i = ((struct thr_arg_st *)p)->n;
+    // i = ((struct thr_arg_st *)p)->n;
+    i = num;
+
     // free(p);
     mark = 1;
     for(j = 2; j<i/2; j++)
