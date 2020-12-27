@@ -25,16 +25,16 @@ int main()
     pthread_t tid[THRNUM];
     for(i = 0; i< THRNUM; i++)
     {
-        err = pthread_create(tid+i,NULL, thr_func, (void *)i);
+        err = pthread_create(tid+i,NULL, thr_func,(void *)i);
         if(err)
         {
             fprintf(stderr, "pthread_create():%s\n", strerror(err));
             exit(1);
         }
     }
+    alarm(5);
     for (i = 0; i <THRNUM; i++)
     {
         pthread_join(tid[i], NULL);
     }    
-    pthread_mutex_destroy(&mut);
 }
