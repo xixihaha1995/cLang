@@ -12,7 +12,9 @@ static pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
 
 static void *thr_func(void *p)
 {
-
+    int c = 'a' + (int)p;
+    while(1)
+        write(1,&c,1);
     pthread_exit(NULL);
 
 }
