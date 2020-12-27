@@ -4,9 +4,9 @@
 #include <pthread.h>
 #include <string.h>
 
-#define LEFT 0
-#define RIGHT 3
-#define THRNUM (RIGHT-LEFT+1)
+#define LEFT 30000000
+#define RIGHT 30000200
+#define THRNUM 4
 
 
 static int num = 0;
@@ -27,7 +27,7 @@ int main()
     
     
 
-    for(i=LEFT; i<=RIGHT;i++)
+    for(i=0; i<THRNUM;i++)
     {   
         p = malloc(sizeof(*p));
         if (p == NULL)
@@ -36,7 +36,7 @@ int main()
             exit(1);
         }
         p->n = i;
-        err = pthread_create(tid+(i-LEFT), NULL,thr_prime,p);
+        err = pthread_create(tid+i, NULL,thr_prime,p);
         if (err)
         {
             fprintf(stderr, "pthread_create():%s\n", strerror(err));
@@ -44,14 +44,16 @@ int main()
         }
     }
     
-    for(i = LEFT; i<= RIGHT; i++)
+    for(i = 0; i<= THRNUM; i++)
     {
         // join needs a secondary pointer
         // or the address of void *pointer
-        pthread_join(tid[i-LEFT], &returnedStP);
+        pthread_join(tid[i], &returnedStP);
         free(returnedStP);
-        pthread_mutex_destroy(&mut_num);
+        
     }
+
+    pthread_mutex_destroy(&mut_num);
         
     
     exit(0);
