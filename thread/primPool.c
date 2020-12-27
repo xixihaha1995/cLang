@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <string.h>
+#include <sched.h>
 
 #define LEFT 30000000
 #define RIGHT 30000200
