@@ -5,24 +5,25 @@
 #include <sys/wait.h>
 
 
-#define MAX      30000
+#define MAX      30
 #define BUFFSIZE    32
 int pipe_default[2];
 
 int main()
 {
-    int i,j;
+    int j;
+    int i = 0;
     pid_t pid;
-    int buffer[BUFFSIZE];
-    memset(buffer,0,BUFFSIZE);
+    int buffer;
+
     if(pipe(pipe_default) < 0)
     {
         perror("pipe()");
         exit(1);
     }
+
     for(j; j<= MAX; j++)
     {
-        i++;
         pid = fork();
         if (pid <0)
         {
@@ -32,31 +33,31 @@ int main()
         if(pid == 0)
         {   
             close(pipe_default[1]);
-            sleep(2);
-            if(read(pipe_default[0],buffer,32)>0)
+            // sleep(1);
+            if(read(pipe_default[0],&buffer,sizeof(buffer))>0)
             {
-                printf("receive data from parent = %s\n", buffer);
+                printf("receive data from parent = %d\n", buffer);
             }
             close(pipe_default[0]);
-            // exit(0);
+            exit(0);
         }
         else
-        {
+        {   
             close(pipe_default[0]);
-            char msg[BUFFSIZE] = "HELLO";
-            if(write(pipe_default[1], msg,strlen(msg)) < 0)
+            i++;
+            if(write(pipe_default[1], &i,sizeof(i)) != -1)
             {
-                perror("parent failed to write()");
-                exit(1);
+                printf("parent wrote num =%d\n",i);
             }
+            // sleep(2);
             close(pipe_default[1]);
-            waitpid(pid,NULL,0);
+            // waitpid(pid,NULL,0);
         }
         
     }
-    // for(j = 0; j<=MAX;j++)
-    // {
-    //     wait(NULL);
-    // }
+    for(j = 0; j<=MAX;j++)
+    {
+        wait(NULL);
+    }
     exit(0);
 }
