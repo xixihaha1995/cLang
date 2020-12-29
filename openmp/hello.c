@@ -1,12 +1,15 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <omp.h>
 
 int main()
 {
-    #pragma omp parallel
+    #pragma omp parallel sections
     {
-        puts("hello");
-        puts("world");
+        #pragma omp section
+        printf("[%d]hello\n", omp_get_thread_num());
+        #pragma omp section
+        printf("[%d]world\n", omp_get_thread_num());
     }
     exit(0);
 }
