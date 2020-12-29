@@ -5,7 +5,7 @@
 #include <sys/wait.h>
 
 
-#define MAX      30
+#define MAX      30000
 #define BUFFSIZE    32
 int pipe_default[2];
 

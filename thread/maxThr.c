@@ -8,11 +8,11 @@ static int printNum;
 
 void *func(void *p)
 {
-    // while(1)
-    //     pause();
+    while(1)
+        pause();
 
-    printf("printNum= %d\n",printNum);
-    printNum++;
+    // printf("printNum= %d\n",printNum);
+    // printNum++;
     pthread_exit(NULL);
 
 }
@@ -22,7 +22,7 @@ int main()
     int i = MAX;
     int j;
     pthread_t tid[MAX];
-    for(j;j<=i;j++)
+    for(j;;j++)
     {
         if(pthread_create(tid+j, NULL, func, NULL) != 0)
         {
