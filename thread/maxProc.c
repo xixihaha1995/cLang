@@ -1,52 +1,61 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <pthread.h>
 #include <string.h>
+#include <sys/wait.h>
 
-#define THRNUM  20
+#define PROCNUM  3000
 #define FNAME   "/tmp/out"
 #define LINESIZE    1025
 
-static pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
-
-static void *thr_add(void *p)
+// func_add parameters are not required
+static void func_add(void)
 {
     char linebuf[LINESIZE];
     FILE *fp;
+    int fd;
     fp = fopen(FNAME, "r+");
     if(fp == NULL)
     {
         perror("fopen()");
         exit(1);
     }
-    pthread_mutex_lock(&mut);
+    fd = fileno(fp);
+    lockf(fd, F_LOCK, 0);
     fgets(linebuf,LINESIZE,fp);
     fseek(fp,0,SEEK_SET);
     // sleep(1);
     fprintf(fp,"%d\n",atoi(linebuf)+1);
+    fflush(fp);
+    // fclose might mistakenly unlock file
+    // to make sure each proc works independently
+    lockf(fd, F_ULOCK, 0);
     fclose(fp);
-    pthread_mutex_unlock(&mut);
-    pthread_exit(NULL);
-
+    return;
+    // void return to replace pthread_exit(NULL)
 }
 
 int main()
 {
-    int i, err;
-    pthread_t tid[THRNUM];
-    for(i = 0; i< THRNUM; i++)
+    int i;
+    pid_t pid;
+    for(i = 0; i< PROCNUM; i++)
     {
-        err = pthread_create(tid+i,NULL, thr_add, NULL);
-        if(err)
+        pid = fork();
+        if(pid < 0)
         {
-            fprintf(stderr, "pthread_create():%s\n", strerror(err));
+            perror("fork()");
             exit(1);
         }
+        if(pid == 0)
+        {
+            func_add();
+            exit(0);
+        }
     }
-    for (i = 0; i <THRNUM; i++)
+    for (i = 0; i <PROCNUM; i++)
     {
-        pthread_join(tid[i], NULL);
+        wait(NULL);
     }    
-    pthread_mutex_destroy(&mut);
+    exit(0);
 }
