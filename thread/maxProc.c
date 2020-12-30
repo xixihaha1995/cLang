@@ -1,63 +1,52 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <pthread.h>
 #include <string.h>
-#include <sys/wait.h>
 
+#define THRNUM  20
+#define FNAME   "/tmp/out"
+#define LINESIZE    1025
 
-#define MAX      30000
-#define BUFFSIZE    32
-int pipe_default[2];
+static pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
+
+static void *thr_add(void *p)
+{
+    char linebuf[LINESIZE];
+    FILE *fp;
+    fp = fopen(FNAME, "r+");
+    if(fp == NULL)
+    {
+        perror("fopen()");
+        exit(1);
+    }
+    pthread_mutex_lock(&mut);
+    fgets(linebuf,LINESIZE,fp);
+    fseek(fp,0,SEEK_SET);
+    // sleep(1);
+    fprintf(fp,"%d\n",atoi(linebuf)+1);
+    fclose(fp);
+    pthread_mutex_unlock(&mut);
+    pthread_exit(NULL);
+
+}
 
 int main()
 {
-    int j;
-    int i = 0;
-    pid_t pid;
-    int buffer;
-
-    if(pipe(pipe_default) < 0)
+    int i, err;
+    pthread_t tid[THRNUM];
+    for(i = 0; i< THRNUM; i++)
     {
-        perror("pipe()");
-        exit(1);
-    }
-
-    for(j; j<= MAX; j++)
-    {
-        pid = fork();
-        if (pid <0)
+        err = pthread_create(tid+i,NULL, thr_add, NULL);
+        if(err)
         {
-            perror("fork()");
+            fprintf(stderr, "pthread_create():%s\n", strerror(err));
             exit(1);
         }
-        if(pid == 0)
-        {   
-            close(pipe_default[1]);
-            // sleep(1);
-            if(read(pipe_default[0],&buffer,sizeof(buffer))>0)
-            {
-                printf("receive data from parent = %d\n", buffer);
-            }
-            close(pipe_default[0]);
-            exit(0);
-        }
-        else
-        {   
-            close(pipe_default[0]);
-            i++;
-            if(write(pipe_default[1], &i,sizeof(i)) != -1)
-            {
-                printf("parent wrote num =%d\n",i);
-            }
-            // sleep(2);
-            close(pipe_default[1]);
-            // waitpid(pid,NULL,0);
-        }
-        
     }
-    for(j = 0; j<=MAX;j++)
+    for (i = 0; i <THRNUM; i++)
     {
-        wait(NULL);
-    }
-    exit(0);
+        pthread_join(tid[i], NULL);
+    }    
+    pthread_mutex_destroy(&mut);
 }
