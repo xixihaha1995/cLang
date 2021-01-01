@@ -102,16 +102,31 @@ int main()
 
     while(1)
     {
+        // this should be CCTV, to continuously print all the server states
         sigsuspend(&oset);
         scan_pool();
+        if(idle_count > MAXSPARESERVER)
+        {
+            for(i = 0; i < (idle_count - MAXSPARESERVER); i++)
+            {
+                del_1_server();
+            }
+        }
+        else if(idle_count < MINSPARESERVER)
+        {
+            for(i = 0; i < (MINSPARESERVER - idle_count); i++)
+            {
+                add_1_server();
+            }
+        }
 
-        
+        for (i = 0; i< MAXCLIENTS; i++)
+        {
+            // if(serverpool[i].pid == )
+        }
 
     }
     sigprocmask(SIG_SETMASK,&oset, NULL);
-
-    accept();
-    close();
     
     exit(0);
 }
