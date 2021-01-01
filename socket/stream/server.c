@@ -73,7 +73,10 @@ int main()
         perror("setsockopt");
         exit(1);
     }
-    bind(sd,&raddr,sizeof(raddr));
+
+    laddr.sin_family = AF_INET;
+    laddr
+    bind(sd,(void *)&laddr,sizeof(laddr));
     listen();
     accept();
     close();
