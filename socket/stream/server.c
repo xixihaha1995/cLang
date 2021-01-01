@@ -9,6 +9,7 @@
 #include <signal.h>
 #include <arpa/inet.h>
 #include <errno.h>
+#include <time.h>
 #include "proto.h"
 
 #define MINSPARESERVER   5
@@ -59,10 +60,10 @@ static void server_job(int pos)
         // I assume the above is not necessary
         kill(ppid, SIG_NOTIFY);
         raddr.sin_family = AF_INET;
-        client_sd = accept(sd,(void )&raddr, &raddr_len);
+        client_sd = accept(sd,(void *)&raddr, &raddr_len);
         if(client_sd < 0)
         {
-            if (errno ! =EINTR || errno != EAGAIN)
+            if (errno != EINTR || errno != EAGAIN)
             {
                 perror("accept()");
                 exit(1);
@@ -140,7 +141,8 @@ static int del_1_server(void)
 
 static int scan_pool(void)
 {
-    int i;
+    int i, idle, busy;
+    // idle and busy are used for avoiding confliction
     for(i = 0; i < MAXCLIENTS;i++)
     {
         if(serverpool[i].pid == -1)
@@ -152,10 +154,10 @@ static int scan_pool(void)
             continue;
         }
         if(serverpool[i].state == STATE_IDLE)
-            idle_count++;
+            idle++;
         else if(serverpool[i].state == STATE_BUSY)
         {
-            busy_count++;
+            busy++;
         }
         else
         {
@@ -163,6 +165,9 @@ static int scan_pool(void)
             abort();
         }
     }
+    idle_count = idle;
+    busy_count = busy;
+    return 0;
 }
 
 
@@ -176,13 +181,12 @@ int main()
     struct sigaction sa, osa;
     // this SIGCHLD was designed to wait to kill the child proc
     // here we redefine its action, and we ask chid proc to kill themselves
-    sa.__sigaction_handler = SIG_IGN;
+    sa.sa_handler = SIG_IGN;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = SA_NOCLDWAIT;
     sigaction(SIGCHLD, &sa, &osa);
 
-
-    sa.__sigaction_handler = usr2_handler;
+    sa.sa_handler = usr2_handler;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = 0;
     sigaction(SIG_NOTIFY, &sa, &osa);
