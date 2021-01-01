@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <netinet/ip.h>
 #include <sys/mman.h>
 #include <signal.h>
 
@@ -34,6 +37,9 @@ static struct server_st *serverpool;
 
 int main()
 {   
+    int val = 1;
+    struct sockaddr_in laddr, raddr;
+
     struct sigaction sa, osa;
     // this SIGCHLD was designed to wait to kill the child proc
     // here we redefine its action, and we ask chid proc to kill themselves
@@ -55,10 +61,19 @@ int main()
         exit(1);
     }    
 
-    
-    socket();
-    setsockopt();
-    bind();
+    sd = socket(AF_INET, SOCK_STREAM, 0);
+    if(sd <0)
+    {
+        perror("socket()");
+        exit(1);
+    }
+   
+    if(setsockopt(sd,SOL_SOCKET, SO_REUSEADDR,&val, sizeof(val)) <0)
+    {
+        perror("setsockopt");
+        exit(1);
+    }
+    bind(sd,&raddr,sizeof(raddr));
     listen();
     accept();
     close();
