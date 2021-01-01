@@ -40,6 +40,7 @@ static struct server_st *serverpool;
 int main()
 {   
     int val = 1;
+    int i;
     struct sockaddr_in laddr, raddr;
 
     struct sigaction sa, osa;
@@ -55,6 +56,11 @@ int main()
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = 0;
     sigaction(SIG_NOTIFY, &sa, &osa);
+
+    sigset_t set,oset;
+    sigemptyset(&set);
+    sigaddset(&set, SIG_NOTIFY);
+    sigprocmask(SIG_BLOCK, &set, &oset);
 
     serverpool = mmap(NULL, sizeof(struct server_st)*MAXCLIENTS, PROT_READ|PROT_WRITE,MAP_SHARED|MAP_ANONYMOUS,-1,0);
     if(serverpool == MAP_FAILED)
@@ -89,15 +95,21 @@ int main()
         perror("listen()");
         exit(1);
     }
-    for()
+    for(i = 0; i< MINSPARESERVER; i++)
     {
-        fork();
+        add_1_server();
     }
 
-    while()
+    while(1)
     {
-        sigsuspend();
+        sigsuspend(&oset);
+        scan_pool();
+
+        
+
     }
+    sigprocmask(SIG_SETMASK,&oset, NULL);
+
     accept();
     close();
     
