@@ -6,6 +6,8 @@
 #include <netinet/ip.h>
 #include <sys/mman.h>
 #include <signal.h>
+#include <arpa/inet.h>
+#include "proto.h"
 
 #define MINSPARESERVER   5
 #define MAXSPARESERVER   10
@@ -75,9 +77,19 @@ int main()
     }
 
     laddr.sin_family = AF_INET;
-    laddr
-    bind(sd,(void *)&laddr,sizeof(laddr));
-    listen();
+    laddr.sin_port = htons(atoi(SERVERPORT));
+    inet_pton(AF_INET, "0.0.0.0",&laddr.sin_addr);
+    if(bind(sd,(void *)&laddr,sizeof(laddr)) < 0)
+    {
+        perror("bind()");
+        exit(1);
+    }
+    if(listen(sd, 100) < 0)
+    {
+        perror("listen()");
+        exit(1);
+    }
+    
     accept();
     close();
     
