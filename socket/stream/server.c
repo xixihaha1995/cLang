@@ -24,13 +24,76 @@ enum
 
 struct server_st
 {
-    pid_t pid;
+    pid_t pid ;
     int state;
 };
 
 static void usr2_handler(int s)
 {
     return;
+}
+
+static int server_job()
+{
+    
+}
+
+static int add_1_server(void)
+{
+    int slot;
+    pid_t pid;
+    if(idle_count + busy_count >= MAXCLIENTS)
+    {
+        return -1;
+    }
+    for(slot = 0; slot <MAXCLIENTS;slot++)
+    {
+        if(serverpool[slot].pid == -1)
+        {
+            break;
+        }
+    }
+    serverpool[slot].state = STATE_IDLE;
+    pid = fork();
+    // only place for creating child process
+    if(pid < 0)
+    {
+        perror("fork()");
+        exit(1);
+    }
+    if(pid == 0)
+    {
+        server_job();
+        exit(0);
+        // 进程级别的结束，用exit（0）
+    }
+    else
+    {
+        serverpool[slot].pid = pid;
+        idle_count++;
+
+    }
+    return 0;
+
+
+}
+
+static int del_1_server(void)
+{
+    int i = 0;
+    if(idle_count == 0)
+        return -1;
+    for(i = 0; i< MAXCLIENTS; i++)
+    {
+        if(serverpool[i].pid != -1 && serverpool[i].state == STATE_IDLE)
+        {
+            kill(serverpool[i].pid, SIGTERM);
+            serverpool[i].pid = -1;
+            idle_count--;
+            break;
+        }
+    }
+    return 0;
 }
 
 static int sd;
@@ -127,6 +190,6 @@ int main()
 
     }
     sigprocmask(SIG_SETMASK,&oset, NULL);
-    
+
     exit(0);
 }
