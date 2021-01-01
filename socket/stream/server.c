@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -7,14 +8,21 @@
 #include <sys/mman.h>
 #include <signal.h>
 #include <arpa/inet.h>
+#include <errno.h>
 #include "proto.h"
 
 #define MINSPARESERVER   5
 #define MAXSPARESERVER   10
 #define MAXCLIENTS      20
+#define LINEBUFFSIZE    40
+#define IPSTRSIZE       40
 
 #define SIG_NOTIFY      SIGUSR2
 // user_defined signal action
+static int sd;
+static int idle_count = 0, busy_count = 0;
+static struct server_st *serverpool;
+
 
 enum
 {
@@ -33,9 +41,43 @@ static void usr2_handler(int s)
     return;
 }
 
-static int server_job()
+static void server_job(int pos)
 {
-    
+    int ppid, len;
+    int client_sd;
+    struct sockaddr_in raddr;
+    socklen_t raddr_len;
+    char linebuf[LINEBUFFSIZE];
+    char ipstr[IPSTRSIZE];
+
+
+    ppid = getppid();
+    long long stamp;
+    while(1)
+    {
+        serverpool[pos].state = STATE_IDLE;
+        // I assume the above is not necessary
+        kill(ppid, SIG_NOTIFY);
+        raddr.sin_family = AF_INET;
+        client_sd = accept(sd,(void )&raddr, &raddr_len);
+        if(client_sd < 0)
+        {
+            if (errno ! =EINTR || errno != EAGAIN)
+            {
+                perror("accept()");
+                exit(1);
+            }
+        }
+        serverpool[pos].state = STATE_BUSY;
+        kill(ppid, SIG_NOTIFY);
+        inet_ntop(AF_INET, &raddr.sin_addr, ipstr, IPSTRSIZE);
+        // printf("[%d]client:%s:%d\n", getpid(),ipstr, ntohs(raddr.sin_port));
+        stamp = time(NULL);
+        len = snprintf(linebuf, LINEBUFFSIZE, FMT_STAMP, stamp);
+        send(client_sd, linebuf, len, 0);
+        sleep(5);
+        close(client_sd);
+    }
 }
 
 static int add_1_server(void)
@@ -63,7 +105,7 @@ static int add_1_server(void)
     }
     if(pid == 0)
     {
-        server_job();
+        server_job(slot);
         exit(0);
         // 进程级别的结束，用exit（0）
     }
@@ -96,9 +138,34 @@ static int del_1_server(void)
     return 0;
 }
 
-static int sd;
-static int idle_count = 0, busy_count = 0;
-static struct server_st *serverpool;
+static int scan_pool(void)
+{
+    int i;
+    for(i = 0; i < MAXCLIENTS;i++)
+    {
+        if(serverpool[i].pid == -1)
+            continue;
+        if(kill(serverpool[i].pid, 0))
+        // detect if the designated process exists
+        {
+            serverpool[i].pid = -1;
+            continue;
+        }
+        if(serverpool[i].state == STATE_IDLE)
+            idle_count++;
+        else if(serverpool[i].state == STATE_BUSY)
+        {
+            busy_count++;
+        }
+        else
+        {
+            fprintf(stderr, "unknown state.\n");
+            abort();
+        }
+    }
+}
+
+
 
 int main()
 {   
