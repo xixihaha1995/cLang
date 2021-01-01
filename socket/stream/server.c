@@ -89,7 +89,15 @@ int main()
         perror("listen()");
         exit(1);
     }
-    
+    for()
+    {
+        fork();
+    }
+
+    while()
+    {
+        sigsuspend();
+    }
     accept();
     close();
     
