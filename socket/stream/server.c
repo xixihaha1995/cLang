@@ -202,6 +202,10 @@ int main()
         perror("mmap()");
         exit(1);
     }    
+    for (i = 0; i <MAXCLIENTS; i++)
+    {
+        serverpool[i].pid = -1;
+    }
 
     sd = socket(AF_INET, SOCK_STREAM, 0);
     if(sd <0)
