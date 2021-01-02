@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <time.h>
 #include "proto.h"
+#define _GNU_SOURCE  
 
 #define MINSPARESERVER   5
 #define MAXSPARESERVER   10
@@ -47,13 +48,14 @@ static void server_job(int pos)
     int ppid, len;
     int client_sd;
     struct sockaddr_in raddr;
-    socklen_t raddr_len;
+    int raddr_len;
     char linebuf[LINEBUFFSIZE];
     char ipstr[IPSTRSIZE];
+    time_t stamp;
 
 
     ppid = getppid();
-    long long stamp;
+    
     while(1)
     {
         serverpool[pos].state = STATE_IDLE;
@@ -141,7 +143,7 @@ static int del_1_server(void)
 
 static int scan_pool(void)
 {
-    int i, idle, busy;
+    int i, idle = 0, busy = 0;
     // idle and busy are used for avoiding confliction
     for(i = 0; i < MAXCLIENTS;i++)
     {
@@ -260,8 +262,18 @@ int main()
 
         for (i = 0; i< MAXCLIENTS; i++)
         {
-            // if(serverpool[i].pid == )
+            if(serverpool[i].pid == -1 )
+            {
+                putchar(' ');
+            }
+            else if(serverpool[i].state == STATE_IDLE){
+                putchar('.');
+            }else 
+            {
+                putchar('X');
+            }
         }
+        putchar('\n');
 
     }
     sigprocmask(SIG_SETMASK,&oset, NULL);
