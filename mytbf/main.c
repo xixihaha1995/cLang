@@ -56,7 +56,9 @@ int main(int argc, char **argv)
             fprintf(stderr,"cannot fetch valid token: %s\n", strerror(-size));
             exit(1);
         }
-        while((len = read(sfd,buf,BUFSIZE)) < 0)
+
+        // token is used for how much you can read
+        while((len = read(sfd,buf,size)) < 0)
         {
             if(errno == EINTR)
             {

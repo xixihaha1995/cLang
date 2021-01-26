@@ -29,18 +29,19 @@ static int get_free_pos(void)
 
 static int min(int a, int b)
 {
-    if(a > b)
-        return b;
-    return a;
+    if(a < b)
+        return a;
+    return b;
 }
 static __sighandler_t alrm_handler_save;
 
 static void alrm_handler(int s)
 {
+    // 经典嵌套调用：alrm_handler因为alarm信号才回调，马上又预约下一个alarm
+    alarm(1);
     for(int i = 0; i< MYTBF_MAX; i++)
     {
-        // 经典嵌套调用：alrm_handler因为alarm信号才回调，马上又预约下一个alarm
-        alarm(1);
+
         // 闲着没事，给所有在使用的tbf加token，每次加cps
         if(job[i] != NULL)
         {
