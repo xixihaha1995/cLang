@@ -37,7 +37,43 @@ int main(int argc, char **argv)
     }while(sfd < 0);
     while(1)
     {
-        lread(sfd,buf,BUFSIZE);
+        len = read(sfd,buf,BUFSIZE);
+        if (len <0)
+        {
+            if(errno == EINTR)
+            {
+                continue;
+            }
+            perror("read");
+            break;
+        }
+        if(len == 0)
+        {
+            break;
+        }
+        pos = 0;
+        while(len >0)
+        {
+            ret = write(dfd,buf+pos,len);
+            if(ret <0)
+            {
+                if(errno == EINTR)
+                {
+                    continue;
+                }
+                perror("write");
+                break;
+            }
+            if(ret == 0)
+            {
+                break;
+            }
+            len -= ret;
+            pos += ret;
+        }
+
+
+
     }
 
 
