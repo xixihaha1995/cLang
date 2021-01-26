@@ -10,9 +10,9 @@
 #include "mytbf.h"
 
 
-#define CPS 1
-#define BUFSIZE 10
-#define BURST   1
+#define CPS 10
+#define BUFSIZE 1024
+#define BURST   100
 
 
 int main(int argc, char **argv)
