@@ -8,6 +8,7 @@ struct mytbf_st
     int cps;
     int burst;
     int token;
+    int pos;
 };
 static int get_free_pos(void)
 {
@@ -16,7 +17,7 @@ static int get_free_pos(void)
         if(job[i] == NULL)
             return i;
     }
-    return NULL;
+    return -1;
 }
 
 mytbf_t *mytbf_init(int cps, int burst)
@@ -32,7 +33,10 @@ mytbf_t *mytbf_init(int cps, int burst)
     me->burst = burst;
     me->token = 0;
     pos = get_free_pos();
-    if(pos == NULL)
+    if(pos < 0)
+        return NULL;
+    me->pos = pos;
+    job[pos] = me;
 
     return me;
 }
@@ -47,7 +51,10 @@ int     mytbf_returntoken(mytbf_t *tbf, int size)
 
 }
 
-int     mytbf_destroy(mytbf_t *tbf)
+int     mytbf_destroy(mytbf_t *ptr)
 {
-    
+    struct mytbf_st *me = ptr;
+    job[me->pos] = NULL;
+    free(me);
+    return 0;
 }
