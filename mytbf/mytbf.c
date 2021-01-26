@@ -1,9 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <signal.h>
+#include <unistd.h>
 #include "mytbf.h"
 
+// 令牌桶指针数组什么时候被创建
+// 当 mytbf[ch]被编译链接后
 static struct mytbf_st* job[MYTBF_MAX];
+static int inited = 0;
+
 struct mytbf_st
 {
     int cps;
@@ -28,9 +34,38 @@ static int min(int a, int b)
     return a;
 }
 
+static void alrm_handler(int s)
+{
+    for(int i = 0; i< MYTBF_MAX; i++)
+    {
+        // 经典嵌套调用：alrm_handler因为alarm信号才回调，马上又预约下一个alarm
+        alarm(1);
+        // 闲着没事，给所有在使用的tbf加token，每次加cps
+        if(job[i] != NULL)
+        {
+            job[i]->token += job[i]->cps;
+            if (job[i]->token > job[i]->burst)
+                job[i]->token = job[i]->burst;
+        }
+    }
+}
+
+static void module_loader(void)
+{
+    signal(SIGALRM, alrm_handler);
+    alarm(1);
+}
+
 mytbf_t *mytbf_init(int cps, int burst)
 {
     struct mytbf_st *me;
+    if(!inited)
+    {
+        module_loader();
+        inited = 1;
+    }
+
+
     int pos;
     me = malloc(sizeof(*me));
     if(me  == NULL)

@@ -68,7 +68,7 @@ int main(int argc, char **argv)
         
         if((size - len) > 0)
         {
-            if((mytbf_returntoken(tbf,size-len) < 0)
+            if((mytbf_returntoken(tbf,size-len)) < 0)
             {
                 fprintf(stderr,"cannot fetch valid token: %s\n", strerror(-size));
                 exit(1);
