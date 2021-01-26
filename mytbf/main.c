@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <signal.h>
+#include <string.h>
 #include "mytbf.h"
 
 
@@ -50,6 +51,11 @@ int main(int argc, char **argv)
     while(1)
     {
         size = mytbf_fetchtoken(tbf, BUFSIZE);
+        if(size <0 )
+        {
+            fprintf(stderr,"cannot fetch valid token: %s\n", strerror(-size));
+            exit(1);
+        }
         while((len = read(sfd,buf,BUFSIZE)) < 0)
         {
             if(errno == EINTR)
@@ -62,7 +68,11 @@ int main(int argc, char **argv)
         
         if((size - len) > 0)
         {
-            mytbf_returntoken(tbf,size-token);
+            if((mytbf_returntoken(tbf,size-len) < 0)
+            {
+                fprintf(stderr,"cannot fetch valid token: %s\n", strerror(-size));
+                exit(1);
+            }
         }
 
         if(len == 0)

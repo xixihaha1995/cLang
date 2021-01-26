@@ -51,6 +51,7 @@ int main(int argc, char **argv)
         while(token <= 0)
             pause();
         // non-blocking unblock call
+        // 其实这也是阻塞调用
         token --;
         while((len = read(sfd,buf,BUFSIZE)) < 0)
         {
