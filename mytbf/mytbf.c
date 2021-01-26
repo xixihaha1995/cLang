@@ -33,6 +33,7 @@ static int min(int a, int b)
         return b;
     return a;
 }
+static __sighandler_t alrm_handler_save;
 
 static void alrm_handler(int s)
 {
@@ -50,10 +51,20 @@ static void alrm_handler(int s)
     }
 }
 
+static void module_unloader(void)
+{
+    signal(SIGALRM, alrm_handler_save);
+    alarm(0);
+    for(int i = 0; i < MYTBF_MAX; i++)
+        free(job[i]);
+    
+}
+
 static void module_loader(void)
 {
-    signal(SIGALRM, alrm_handler);
+    alrm_handler_save = signal(SIGALRM, alrm_handler);
     alarm(1);
+    atexit(module_unloader);
 }
 
 mytbf_t *mytbf_init(int cps, int burst)
