@@ -7,7 +7,7 @@ struct mytbf_st
     int cps;
     int burst;
     int token;
-}
+};
 
 mytbf_t *mytbf_init(int cps, int burst)
 {
