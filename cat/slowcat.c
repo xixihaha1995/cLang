@@ -44,13 +44,14 @@ int main(int argc, char **argv)
             }
         }
     }while(sfd < 0);
+
     while(1)
     {
         while(!loop)
-            ;
+            pause();
+        // non-blocking unblock call
         loop = 0;
-        len = read(sfd,buf,BUFSIZE);
-        if (len <0)
+        while((len = read(sfd,buf,BUFSIZE)) < 0)
         {
             if(errno == EINTR)
             {
@@ -59,6 +60,7 @@ int main(int argc, char **argv)
             perror("read");
             break;
         }
+
         if(len == 0)
         {
             break;
