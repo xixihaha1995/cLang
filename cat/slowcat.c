@@ -5,10 +5,18 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <signal.h>
 
 
 #define CPS 10
 #define BUFSIZE CPS
+
+static volatile int loop = 0;
+static void alrm_handler(int s)
+{
+    alarm(1);
+    loop = 1;
+}
 
 int main(int argc, char **argv)
 {
@@ -21,7 +29,8 @@ int main(int argc, char **argv)
         fprintf(stderr, "Usage ...\n" );
         exit(1);
     }
-
+    signal(SIGALRM, alrm_handler);
+    alarm(1);
     // prevention of signal interrupt
     do
     {
@@ -37,6 +46,9 @@ int main(int argc, char **argv)
     }while(sfd < 0);
     while(1)
     {
+        while(!loop)
+            ;
+        loop = 0;
         len = read(sfd,buf,BUFSIZE);
         if (len <0)
         {
@@ -71,9 +83,6 @@ int main(int argc, char **argv)
             len -= ret;
             pos += ret;
         }
-
-
-
     }
 
 
