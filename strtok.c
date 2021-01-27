@@ -3,11 +3,11 @@
 
 int main()
 {
-    char str[] = "GETFILE GET /path/to/file\r\n\r\n";
-    char *token[3];
+    char str[] = "GETFILE GET /path/to/file\r\n\r\n123456";
+    char *token[4];
     char *saveptr;
     int i = 0;
-    for(token[i] = strtok_r(str," ",&saveptr); token[i] != NULL; token[++i] = strtok_r(NULL," ",&saveptr))
+    for(token[i] = strtok_r(str,"\r\n\r\n",&saveptr); token[i] != NULL; token[++i] = strtok_r(NULL,"\r\n\r\n",&saveptr))
     {
         printf("token[%d]: %s\n", i,token[i]);
     }
