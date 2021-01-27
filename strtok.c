@@ -4,12 +4,12 @@
 int main()
 {
     char str[] = "GETFILE GET /path/to/file\r\n\r\n";
-    // char str[]= "hello world";
-    char *token =NULL;
+    char *token[3];
     char *saveptr;
-    for(token = strtok_r(str," ",&saveptr); token; token = strtok_r(NULL," ",&saveptr))
+    int i = 0;
+    for(token[i] = strtok_r(str," ",&saveptr); token[i] != NULL; token[++i] = strtok_r(NULL," ",&saveptr))
     {
-        printf("%s\n", token);
+        printf("token[%d]: %s\n", i,token[i]);
     }
     return 0;
 }
