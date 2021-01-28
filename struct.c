@@ -15,9 +15,9 @@ struct out
 
 int main()
 {
-    struct out *outsider;
-    outsider = malloc(sizeof(*outsider));
-    outsider->a = 666;
-    printf("The num insider which inside out is: %d\n", outsider->a);
+    struct out outsider;
+    // outsider = malloc(sizeof(*outsider));
+    outsider.a = 666;
+    printf("The num insider which inside out is: %d\n", outsider.a);
     return 0;
 }
