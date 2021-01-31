@@ -3,9 +3,13 @@
 
 int main()
 {
-    char str[] = "GETFILE GET";
+    char strOld[] = "GETFILE GET /path/to\r\n\r\n I love you";
+    char *str =NULL;
     char *token[5];
-    char *saveptr;
+    char *saveptr = NULL;
+    str = strtok_r(strOld,"\r\n\r\n",&saveptr);
+    saveptr = NULL;
+
     int i = 0;
     for(token[i] = strtok_r(str," ",&saveptr); ; token[++i] = strtok_r(NULL," ",&saveptr))
     {
@@ -14,7 +18,7 @@ int main()
          printf("token[%d]: %s\n", i,token[i]);
     }
     printf("%d\n", i);
-    if(i == 3 && token[0] == "GETFILE" && token[1] == "GET" && token[2][0]=='/' )
+    if(i == 3 && strcmp(token[0],"GETFILE") == 0 && strcmp(token[1],"GET") ==0  && token[2][0]=='/' )
     {
         printf("token[%d]: %c\n", 2,token[2][0]);
     }
