@@ -3,11 +3,12 @@
 
 int main()
 {
-    char strOld[] = "GETFILE GET /path/to\r\n\r\nI love you hhhhhh";
+    char strOld[] = "GET\r\n\r\nI love you hhhhhh";
     char *str =NULL;
     char *token[5];
     char *saveptrOne= NULL;
     str = strtok_r(strOld,"\r\n\r\n",&saveptrOne);
+    printf("str is:%s; and its strlen is:%d; sizeof is:%d\n", str,strlen(str), sizeof(str));
     printf("saveOne is:%s; str is:%s\n", saveptrOne, str);
     char *saveptr = NULL;
 
