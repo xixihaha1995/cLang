@@ -101,6 +101,7 @@ static void *thr_prime(void *p)
         while (num == 0)
         {
             pthread_cond_wait(&cond, &mut_num);
+            // 到达这里解锁wait，得到通知，立马抢锁，lock（mut_num）
             // pthread_mutex_unlock(&mut_num);
             // sched_yield();
             // pthread_mutex_lock(&mut_num);
