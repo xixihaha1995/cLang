@@ -3,12 +3,16 @@
 #include <errno.h>
 #include <signal.h>
 #include <unistd.h>
+#include <pthread.h>
 #include "mytbf.h"
+
 
 // 令牌桶指针数组什么时候被创建
 // 当 mytbf[ch]被编译链接后
 static struct mytbf_st* job[MYTBF_MAX];
 static int inited = 0;
+static pthread_mutex_t mut_job;
+static pthread_mutex_t mut_num;
 
 struct mytbf_st
 {
