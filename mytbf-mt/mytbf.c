@@ -66,6 +66,7 @@ static void module_loader(void)
     alrm_handler_save = signal(SIGALRM, alrm_handler);
     alarm(1);
     atexit(module_unloader);
+    // 钩子函数到底要free多少
 }
 
 mytbf_t *mytbf_init(int cps, int burst)
