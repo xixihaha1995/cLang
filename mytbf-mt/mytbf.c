@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <errno.h>
 #include <signal.h>
 #include <unistd.h>
@@ -14,6 +15,7 @@ static int inited = 0;
 static pthread_mutex_t mut_job = PTHREAD_MUTEX_INITIALIZER;
 // static pthread_mutex_t mut_num;
 static pthread_once_t init_once = PTHREAD_ONCE_INIT;
+static pthread_t tid;
 
 struct mytbf_st
 {
@@ -23,7 +25,7 @@ struct mytbf_st
     int pos;
     pthread_mutex_t mut_num;
 };
-static int get_free_pos(void)
+static int get_free_pos_unblocked(void)
 {
     for(int i = 0; i < MYTBF_MAX; i++)
     {
@@ -39,41 +41,63 @@ static int min(int a, int b)
         return a;
     return b;
 }
-static __sighandler_t alrm_handler_save;
+// static __sighandler_t alrm_handler_save;
 
-static void thread_handler(int s)
+static void *thread_handler(void *p)
 {
     // 经典嵌套调用：alrm_handler因为alarm信号才回调，马上又预约下一个alarm
-    alarm(1);
-    for(int i = 0; i< MYTBF_MAX; i++)
+    // alarm(1);
+    while(1)
     {
-
-        // 闲着没事，给所有在使用的tbf加token，每次加cps
-        if(job[i] != NULL)
+        pthread_mutex_lock(&mut_job);
+        for(int i = 0; i< MYTBF_MAX; i++)
         {
-            job[i]->token += job[i]->cps;
-            if (job[i]->token > job[i]->burst)
-                job[i]->token = job[i]->burst;
+            if(job[i] != NULL)
+            {
+                pthread_mutex_lock(&job[i]->mut_num);
+                job[i]->token += job[i]->cps;
+                if (job[i]->token > job[i]->burst)
+                    job[i]->token = job[i]->burst;
+                pthread_mutex_unlock(&job[i]->mut_num);
+            }
         }
+        pthread_mutex_unlock(&mut_job);
+        sleep(1);
     }
+
 }
 
 static void module_unloader(void)
 {
     // signal(SIGALRM, alrm_handler_save);
     // alarm(0);
-    pthrea
+    // 应该destroy每个令牌桶中的互斥量
+    // unlock 只能调用一次，无需加锁解锁
+    pthread_cancel(tid);
+    pthread_join(tid,NULL);
     for(int i = 0; i < MYTBF_MAX; i++)
-        free(job[i]);
-    
+    {
+        if(job[i] != NULL)
+        {
+            mytbf_destroy(job[i]);
+        }
+    }
+    pthread_mutex_destroy(&mut_job);
 }
 
 static void module_loader(void)
 {
     // alrm_handler_save = signal(SIGALRM, alrm_handler);
     // alarm(1);
-    pthread_t tid;
-    pthread_create(&tid,NULL,thread_handler,0);
+    // pthread_t tid;
+    int err;
+    err = pthread_create(&tid,NULL,thread_handler,NULL);
+    if(err)
+    {
+        fprintf(stderr,"create thread\n",strerror(err));
+        // return -1;
+        exit(1);
+    }
     atexit(module_unloader);
     // 钩子函数到底要free多少
 }
@@ -81,12 +105,12 @@ static void module_loader(void)
 mytbf_t *mytbf_init(int cps, int burst)
 {
     struct mytbf_st *me;
-    if(!inited)
-    {
-        // module_loader();
-        pthread_once(&init_once,module_loader);
-        inited = 1;
-    }
+    // if(!inited)
+    // {
+    //     // module_loader();
+    //     inited = 1;
+    // }
+    pthread_once(&init_once,module_loader);
 
 
     int pos;
@@ -98,8 +122,11 @@ mytbf_t *mytbf_init(int cps, int burst)
     me->cps = cps;
     me->burst = burst;
     me->token = 0;
+    // 
+    pthread_mutex_init(&me->mut_num,NULL);
+    // me->mut_num = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_lock(&mut_job);
-    pos = get_free_pos();
+    pos = get_free_pos_unblocked();
     if(pos < 0)
         return NULL;
     me->pos = pos;
@@ -153,8 +180,12 @@ int     mytbf_returntoken(mytbf_t *ptr, int size)
 int     mytbf_destroy(mytbf_t *ptr)
 {
     struct mytbf_st *me = ptr;
-    job[me->pos] = NULL;
-    free(me);
     pthread_mutex_destroy(&me->mut_num);
+    pthread_mutex_lock(&mut_job);
+    job[me->pos] = NULL;
+    pthread_mutex_unlock(&mut_job);
+    
+    free(me);
+    
     return 0;
 }

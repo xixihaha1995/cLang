@@ -1,5 +1,5 @@
-GFLAGS+=pthread
-LFLAGS+=pthread
+GFLAGS+=-pthread
+LFLAGS+=-pthread
 all:mytbf
 
 mytbf:main.o mytbf.o
