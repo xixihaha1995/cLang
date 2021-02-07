@@ -57,6 +57,7 @@ int main()
             // pthread_mutex_lock(&mut_num);
         }
         num = i;
+        pthread_cond_signal(&condJob);
         pthread_mutex_unlock(&mut_num);
     }
 
@@ -70,6 +71,7 @@ int main()
         // pthread_mutex_lock(&mut_num);
     }
     num = -1;
+    pthread_cond_broadcast(&condJob);
     pthread_mutex_unlock(&mut_num);
     
 
@@ -111,6 +113,7 @@ static void *thr_prime(void *p)
         }
         i = num;
         num = 0;
+        pthread_cond_broadcast(&condJob);
         pthread_mutex_unlock(&mut_num);
 
         // free(p);
