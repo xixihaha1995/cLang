@@ -181,7 +181,8 @@ int     mytbf_returntoken(mytbf_t *ptr, int size)
     if(me->token > me->burst)
         me->token = me->burst;
         // basically information can be passed via ptr from main.c to mytbf.c;
-
+    pthread_cond_broadcast(&me->cond_num);
+    // the above call should be same as pthread_cond_signal();
     pthread_mutex_unlock(&me->mut_num);
 
     return size;
