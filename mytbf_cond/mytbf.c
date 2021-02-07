@@ -13,7 +13,7 @@
 static struct mytbf_st* job[MYTBF_MAX];
 static int inited = 0;
 static pthread_mutex_t mut_job = PTHREAD_MUTEX_INITIALIZER;
-static pthread_cond_t cond_job = PTHREAD_COND_INITIALIZER;
+// static pthread_cond_t cond_job = PTHREAD_COND_INITIALIZER;
 // static pthread_mutex_t mut_num;
 static pthread_once_t init_once = PTHREAD_ONCE_INIT;
 static pthread_t tid;
@@ -27,6 +27,7 @@ struct mytbf_st
     int token;
     int pos;
     pthread_mutex_t mut_num;
+    pthread_cond_t cond_num;
     // pthread_cond_
 };
 static int get_free_pos_unblocked(void)
@@ -62,11 +63,14 @@ static void *thread_handler(void *p)
                 job[i]->token += job[i]->cps;
                 if (job[i]->token > job[i]->burst)
                     job[i]->token = job[i]->burst;
+                // pthread_cond_broadcast(&job[i]->cond_num);
+                pthread_cond_signal(&job[i]->cond_num);
+                // printf("\nI wake up one with pthread_cond_signal()\n");
                 pthread_mutex_unlock(&job[i]->mut_num);
             }
         }
         pthread_mutex_unlock(&mut_job);
-        pthread_cond_broadcast(&cond_job);
+        
         sleep(1);
     }
 
@@ -150,7 +154,7 @@ int     mytbf_fetchtoken(mytbf_t *ptr, int size)
     pthread_mutex_lock(&me->mut_num);
     while(me->token <= 0)
     {
-        pthread_cond_wait(&cond_job,&me->mut_num);
+        pthread_cond_wait(&me->cond_num,&me->mut_num);
         // pthread_mutex_unlock(&me->mut_num);
         // sched_yield;
         // pthread_mutex_lock(&me->mut_num);
@@ -187,6 +191,7 @@ int     mytbf_destroy(mytbf_t *ptr)
 {
     struct mytbf_st *me = ptr;
     pthread_mutex_destroy(&me->mut_num);
+    pthread_cond_destroy(&me->cond_num);
     pthread_mutex_lock(&mut_job);
     job[me->pos] = NULL;
     pthread_mutex_unlock(&mut_job);
