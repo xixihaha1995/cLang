@@ -1,0 +1,10 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "task-cLang.vcxproj",
+      "appliesTo": "cLang.vcxproj.user",
+      "type": "launch"
+    }
+  ]
+}
